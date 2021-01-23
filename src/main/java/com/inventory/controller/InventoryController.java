@@ -21,6 +21,8 @@ import java.util.concurrent.CompletableFuture;
 @RestController
 @RequestMapping("/api/inventory")
 public class InventoryController {
+    private Inventory dummyInv = new Inventory(-1, "", -1);
+
     private final String validateCartTopic = "validate_cart_topic";
     private final String validateCartResponseTopic = "validate_cart_response_topic";
     private final String validateCartResponse_key = "validate_cart_response";
@@ -46,7 +48,6 @@ public class InventoryController {
 
     @GetMapping("/validate/{itemId}/{orderedQuantity}")
     public Mono<Boolean> validate(@PathVariable int itemId, @PathVariable int orderedQuantity) {
-        Inventory dummyInv = new Inventory(-1, "", -1);
 
         Mono<Boolean> valid = inventoryRepository
                 .findById(itemId)
@@ -77,8 +78,8 @@ public class InventoryController {
 
     private void sendCartValidationResponseEvent(Mono<CartItemValidationResponseEvent> response) {
         response
-                .log()
-                .flatMap(event -> {
+//                .log()
+                .flatMap (event -> {
                     CompletableFuture<SendResult<String, String>> res = kafkaTemplate
                             .send(validateCartResponseTopic, validateCartResponse_key, jsonConverter.toJson(event))
                             .completable();
@@ -97,7 +98,19 @@ public class InventoryController {
     }
 
     private Mono<CartItemValidationResponseEvent> validateCartItem(CartItemValidationEvent cartItemValidationEvent) {
-        return Mono.just(new CartItemValidationResponseEvent(1, 1, true));
+        return
+                inventoryRepository
+                        .findById(cartItemValidationEvent.getItemId())
+                        .switchIfEmpty(Mono.just(dummyInv))
+                        .map(inv -> inv.getQuantity())
+                        .flatMap(invQuantity -> {
+                            return invQuantity >= cartItemValidationEvent.getQuantity() ?
+                                    Mono.just(true) : Mono.just(false);
+                        })
+                        .map(isValid -> new CartItemValidationResponseEvent(
+                                cartItemValidationEvent.getItemId(),
+                                cartItemValidationEvent.getQuantity(),
+                                isValid));
     }
 
 }

@@ -40,12 +40,4 @@ public class InventoryController {
         return valid;
     }
 
-//    @GetMapping("/validate/{itemId}")
-//    public Mono<Integer> quantity(@PathVariable int itemId) {
-//        Mono<Integer> invQuantity = inventoryRepository
-//                .findById(itemId)
-//                .map(inv -> inv.getQuantity());
-//
-//        return invQuantity;
-//    }
 }

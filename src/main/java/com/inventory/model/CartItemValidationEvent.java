@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 @Data
 @AllArgsConstructor
 public class CartItemValidationEvent {
-    private int itemId;
+    private int cartid;
+    private int itemid;
     private int quantity;
 }

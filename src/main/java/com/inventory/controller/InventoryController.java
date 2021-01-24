@@ -78,7 +78,6 @@ public class InventoryController {
 
     private void sendCartValidationResponseEvent(Mono<CartItemValidationResponseEvent> response) {
         response
-//                .log()
                 .flatMap (event -> {
                     CompletableFuture<SendResult<String, String>> res = kafkaTemplate
                             .send(validateCartResponseTopic, validateCartResponse_key, jsonConverter.toJson(event))
@@ -100,7 +99,7 @@ public class InventoryController {
     private Mono<CartItemValidationResponseEvent> validateCartItem(CartItemValidationEvent cartItemValidationEvent) {
         return
                 inventoryRepository
-                        .findById(cartItemValidationEvent.getItemId())
+                        .findById(cartItemValidationEvent.getItemid())
                         .switchIfEmpty(Mono.just(dummyInv))
                         .map(inv -> inv.getQuantity())
                         .flatMap(invQuantity -> {
@@ -108,7 +107,8 @@ public class InventoryController {
                                     Mono.just(true) : Mono.just(false);
                         })
                         .map(isValid -> new CartItemValidationResponseEvent(
-                                cartItemValidationEvent.getItemId(),
+                                cartItemValidationEvent.getCartid(),
+                                cartItemValidationEvent.getItemid(),
                                 cartItemValidationEvent.getQuantity(),
                                 isValid));
     }

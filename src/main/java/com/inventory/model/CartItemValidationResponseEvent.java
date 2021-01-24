@@ -7,7 +7,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 public class CartItemValidationResponseEvent {
-    private int itemId;
+    private int cartid;
+    private int itemid;
     private int quantity;
     private boolean isValid;
 }

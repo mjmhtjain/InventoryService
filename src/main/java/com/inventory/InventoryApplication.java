@@ -36,12 +36,5 @@ public class InventoryApplication {
         return initializer;
     }
 
-//    @Autowired
-//    private KafkaTemplate<String, String> template;
-//
-//    @KafkaListener(topics = "validate_cart_topic")
-//    public void listen(ConsumerRecord<?, ?> cr) throws Exception {
-//        log.info(cr.toString());
-//    }
 }
 

@@ -15,7 +15,7 @@ public class Inventory {
 
     @Id
     @Column("id")
-    private int id;
+    private Long id;
 
     @Column("item")
     private String item;

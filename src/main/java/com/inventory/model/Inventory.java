@@ -23,4 +23,8 @@ public class Inventory {
     @Column("quantity")
     private int quantity;
 
+    public Inventory(String item, int quantity) {
+        this.item = item;
+        this.quantity = quantity;
+    }
 }

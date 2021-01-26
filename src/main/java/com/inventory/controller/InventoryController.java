@@ -21,7 +21,7 @@ import java.util.concurrent.CompletableFuture;
 @RestController
 @RequestMapping("/api/inventory")
 public class InventoryController {
-    private Inventory dummyInv = new Inventory(-1, "", -1);
+    private Inventory dummyInv = new Inventory(Long.valueOf(-1), "", -1);
 
     private final String validateCartTopic = "validate_cart_topic";
     private final String validateCartResponseTopic = "validate_cart_response_topic";
@@ -78,7 +78,7 @@ public class InventoryController {
 
     private void sendCartValidationResponseEvent(Mono<CartItemValidationResponseEvent> response) {
         response
-                .flatMap (event -> {
+                .flatMap(event -> {
                     CompletableFuture<SendResult<String, String>> res = kafkaTemplate
                             .send(validateCartResponseTopic, validateCartResponse_key, jsonConverter.toJson(event))
                             .completable();
